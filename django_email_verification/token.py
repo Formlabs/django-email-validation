@@ -47,7 +47,10 @@ class EmailVerificationTokenGenerator:
         key_salt = "django-email-verification.token"
     algorithm = None
     secret = settings.SECRET_KEY
-    accounts_locked = getattr(settings, EMAIL_ACCOUNT_LOCKED, True)
+    try:
+        accounts_locked = settings.EMAIL_ACCOUNTS_LOCKED
+    except AttributeError:
+        accounts_locked = True
 
     def make_token(self, user, expiry=None):
         """
