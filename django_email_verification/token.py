@@ -47,6 +47,7 @@ class EmailVerificationTokenGenerator:
         key_salt = "django-email-verification.token"
     algorithm = None
     secret = settings.SECRET_KEY
+    accounts_locked = getattr(settings, EMAIL_ACCOUNT_LOCKED, True)
 
     def make_token(self, user, expiry=None):
         """
@@ -114,7 +115,7 @@ class EmailVerificationTokenGenerator:
 
     @staticmethod
     def _make_hash_value(user, timestamp):
-        login_timestamp = '' if user.last_login is None else user.last_login.replace(microsecond=0, tzinfo=None)
+        login_timestamp = '' if user.last_login is None or not self.accounts_locked else user.last_login.replace(microsecond=0, tzinfo=None)
         return str(user.pk) + user.password + str(login_timestamp) + str(timestamp)
 
     @staticmethod
